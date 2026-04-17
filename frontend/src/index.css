@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply scroll-smooth;
+}
+
+html, body, #root {
+  min-height: 100vh;
+}
+
+body {
+  @apply bg-gradient-dark text-white font-sans;
+  margin: 0;
+  background-attachment: fixed;
+}
+
+button {
+  @apply transition-all duration-300;
+}
+
+input, textarea, select {
+  @apply bg-secondary text-white border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-2 focus:ring-red-500 focus:ring-opacity-30 backdrop-blur-sm transition-all duration-200;
+}
+
+a {
+  @apply text-primary hover:text-red-400 transition-colors duration-200;
+}
+
+.video-player {
+  aspect-ratio: 16 / 9;
+}
+
+.sidebar {
+  @apply fixed left-0 top-16 bottom-0 w-64 bg-secondary overflow-y-auto;
+}
+
+.main-content {
+  @apply ml-64 pt-16;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(30, 30, 30, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Smooth gradient animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(to right, #212121 8%, #282828 18%, #212121 33%);
+  background-size: 800px 100px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    @apply w-0;
+  }
+  .main-content {
+    @apply ml-0;
+  }
+}
