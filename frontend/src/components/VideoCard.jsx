@@ -38,7 +38,7 @@ export function VideoCard({ video }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <div className="absolute bottom-2 right-2 bg-black bg-opacity-90 px-3 py-1 rounded-lg text-xs text-white font-semibold">
-          {video.duration ? `${Math.floor(video.duration / 60)}:${(video.duration % 60).toString().padStart(2, '0')}` : '0:00'}
+          {video.duration ? `${Math.floor(video.duration / 60)}:${Math.floor(video.duration % 60).toString().padStart(2, '0')}` : '0:00'}
         </div>
       </div>
       
