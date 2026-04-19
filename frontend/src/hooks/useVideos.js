@@ -44,6 +44,7 @@ export function useVideos() {
       const formData = new FormData();
       formData.append('title', videoData.title);
       formData.append('description', videoData.description);
+      formData.append('isPublished', videoData.isPublished);
       if (videoFile) formData.append('videoFile', videoFile);
       if (thumbnailFile) formData.append('thumbnail', thumbnailFile);
 
