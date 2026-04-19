@@ -1,14 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useVideos } from '../hooks/useVideos';
+import { useSubscription } from '../hooks/useSubscription';
+import { useAuth } from '../hooks/useAuth';
 import { VideoCard } from '../components/VideoCard';
 
 export function HomePage() {
   const { videos, loading, error, fetchAll } = useVideos();
+  const { getSubscribedChannels } = useSubscription();
+  const { user } = useAuth();
   const [filter, setFilter] = useState('latest');
+  const [subscribedChannels, setSubscribedChannels] = useState([]);
 
   useEffect(() => {
     fetchAll();
   }, []);
+
+  useEffect(() => {
+    if (user?._id) {
+      getSubscribedChannels(user._id).then(channels => {
+        setSubscribedChannels(channels || []);
+      });
+    }
+  }, [user?._id]);
 
   const sortedVideos = [...videos].sort((a, b) => {
     if (filter === 'latest') {
@@ -17,8 +30,19 @@ export function HomePage() {
     if (filter === 'trending') {
       return b.views - a.views;
     }
+    if (filter === 'subscriptions') {
+      const aIsSubscribed = subscribedChannels.some(ch => ch._id === a.owner?._id);
+      const bIsSubscribed = subscribedChannels.some(ch => ch._id === b.owner?._id);
+      if (aIsSubscribed && !bIsSubscribed) return -1;
+      if (!aIsSubscribed && bIsSubscribed) return 1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
     return 0;
   });
+
+  const filteredVideos = filter === 'subscriptions' 
+    ? sortedVideos.filter(video => subscribedChannels.some(ch => ch._id === video.owner?._id))
+    : sortedVideos;
 
   const filterItems = [
     { key: 'latest', label: 'Latest', icon: '🕐' },
@@ -65,9 +89,14 @@ export function HomePage() {
             <p className="text-gray-400 text-lg">🎬 No videos found</p>
             <p className="text-gray-500 text-sm mt-2">Try uploading your first video!</p>
           </div>
+        ) : filter === 'subscriptions' && filteredVideos.length === 0 ? (
+          <div className="text-center py-20 bg-secondary rounded-xl p-8 border border-gray-700">
+            <p className="text-gray-400 text-lg">⭐ No subscriptions yet</p>
+            <p className="text-gray-500 text-sm mt-2">Subscribe to channels to see their videos here</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedVideos.map((video) => (
+            {filteredVideos.map((video) => (
               <VideoCard key={video._id} video={video} />
             ))}
           </div>
