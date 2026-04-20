@@ -74,14 +74,16 @@ export function AuthProvider({ children }) {
     setError(null);
     try {
       await api.post('/users/logout');
+    } catch (err) {
+      const status = err.response?.status;
+      if (status !== 401) {
+        const errorMsg = err.response?.data?.message || 'Logout failed';
+        setError(errorMsg);
+      }
+    } finally {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
       setUser(null);
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Logout failed';
-      setError(errorMsg);
-      throw err;
-    } finally {
       setLoading(false);
     }
   }, []);

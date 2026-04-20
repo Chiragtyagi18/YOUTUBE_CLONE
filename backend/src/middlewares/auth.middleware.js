@@ -12,7 +12,20 @@ export const verifyJWT = asyncHandler(async (req, _res, next) => {
     throw new ApiError(401, "Unauthorized request");
   }
 
-  const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    if (
+      error?.name === "TokenExpiredError" ||
+      error?.name === "JsonWebTokenError" ||
+      error?.name === "NotBeforeError"
+    ) {
+      throw new ApiError(401, "Invalid or expired access token");
+    }
+    throw error;
+  }
+
   const user = await User.findById(decoded?.id).select("-password -refreshToken");
 
   if (!user) {
